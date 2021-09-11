@@ -26,11 +26,12 @@ while(cap.isOpened()):
     gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
     # Calculates sparse optical flow by Lucas-Kanade method
     # https://docs.opencv.org/3.0-beta/modules/video/doc/motion_analysis_and_object_tracking.html#calcopticalflowpyrlk
+    prev = cv.goodFeaturesToTrack(prev_gray, mask = None, **feature_params)
     next, status, error = cv.calcOpticalFlowPyrLK(prev_gray, gray, prev, None, **lk_params)
     # Selects good feature points for previous position
-    good_old = prev[status == 1]
+    good_old = prev[status == 1].astype(int)
     # Selects good feature points for next position
-    good_new = next[status == 1]
+    good_new = next[status == 1].astype(int)
     # Draws the optical flow tracks
     for i, (new, old) in enumerate(zip(good_new, good_old)):
         # Returns a contiguous flattened array as (x, y) coordinates for new point
